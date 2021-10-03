@@ -1,6 +1,3 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
 import { useEffect, useState } from 'react'
 import { Box, Flex, Heading  } from '@chakra-ui/layout'
 import { Text, Button } from "@chakra-ui/react"
@@ -8,16 +5,17 @@ import {
   NumberInput,
   NumberInputField,
 } from "@chakra-ui/react"
-import Getter from '../web3Repo/getter'
+import Web3Repo from '../repos/web3_repo'
 import Web3 from 'web3'
 import Navbar from '../components/navbar'
 
 export default function Home() {
 
-  const [getter, setGetter] = useState()
+  const [web3Repo, setWeb3Repo] = useState()
   const [name, setName] = useState("Token")
   const [symbol, setSymbol] = useState("TK")
   const [price, setPrice] = useState(0)
+  const [decimals, setDecimals] = useState(18)
   const [eth, setEth] = useState(0)
   const [ethBalance, setEthBalance] = useState('0')
   const [token, setToken] = useState(0)
@@ -26,31 +24,35 @@ export default function Home() {
   const [inputError, setInputError] = useState('')
   const [web3, setWeb3] = useState(new Web3(Web3.givenProvider))
 
+  
+  const getDetails = async (web3Repo) => {
+    const name = await web3Repo.getName()
+    const price = await web3Repo.getPrice()
+    const symbol = await web3Repo.getSymbol()
+    const decimals = await web3Repo.getDecimals()
+    setName(name)
+    setPrice(price)
+    setSymbol(symbol)
+    setDecimals(decimals)
+  }
+
   useEffect(() => {
-    const getDetails = async (getter) => {
-      const name = await getter.getName()
-      const price = await getter.getPrice()
-      const symbol = await getter.getSymbol()
-      setName(name)
-      setPrice(price)
-      setSymbol(symbol)
-    }
     const interval = setInterval(async () => {
       const chainId = parseInt(Web3.givenProvider.chainId, 16)
       const accounts = await web3.eth.getAccounts()
-      let tempGetter
+      let tempRepo
       let error = ''
-      if (chainId!==1337) {
+      if (chainId!==(process.env.CHAIN_ID || 1337)) {
         setTokenBalance(0)
-        error = 'Connect to chain 1337'
+        error = `Connect to chain ${process.env.CHAIN_ID || 1337}`
       } else{
-        if (!getter){
-          tempGetter = new Getter(Web3.givenProvider)
-          setGetter(tempGetter)
-          getDetails(tempGetter)
+        if (!web3Repo){
+          tempRepo = new Web3Repo(Web3.givenProvider)
+          setWeb3Repo(tempRepo)
+          getDetails(tempRepo)
         }else {
-          tempGetter = getter
-          getDetails(tempGetter)
+          tempRepo = web3Repo
+          getDetails(tempRepo)
         }
       }
       if (accounts.length===0){
@@ -62,13 +64,13 @@ export default function Home() {
         setEthBalance(Web3.utils.fromWei(String(ethBalance)))
       }
       if (!error) {
-        const tokenBalance = await tempGetter.getBalance(accounts[0])
+        const tokenBalance = await tempRepo.getBalance(accounts[0])
         setTokenBalance(tokenBalance)
       }
       setErrorMessage(error)
     }, 1000);
     return () => clearInterval(interval);
-  }, [eth, ethBalance])
+  }, [])
 
   useEffect(() => {
     if (+eth>+ethBalance){
@@ -82,7 +84,7 @@ export default function Home() {
 
   const purchase = async () => {
     const accounts = await web3.eth.getAccounts()
-    getter.purchaseToken(accounts[0], Web3.utils.toWei(eth, 'ether'))
+    web3Repo.purchaseToken(accounts[0], Web3.utils.toWei(String(eth), 'ether'))
   }
 
   const updateEth = (e) => {
@@ -106,7 +108,7 @@ export default function Home() {
           <Flex direction="column" pr="20px" alignItems="flex-end" width="35%">
             <Heading as="h4" size="md">ETH</Heading>
             <Flex direction="row">
-              <Text fontSize="xs">{`Balance: ${ethBalance.slice(0,7)}`}</Text>
+              <Text textAlign="right" fontSize="xs">{`Balance: ${parseFloat(ethBalance).toFixed(3)}`}</Text>
               &nbsp;
               <Text fontSize="xs" color="blue" _hover={{cursor:"pointer"}} onClick={() => {updateEth({target:{value:ethBalance}})}}>(Max)</Text>
             </Flex>
@@ -118,7 +120,7 @@ export default function Home() {
         <Flex margin="auto" justifyContent="center" direction="row" py="10px" width="90%">
           <Flex alignItems="flex-end" width="35%" pr="20px" direction="column">
             <Heading as="h4" size="md">{symbol}</Heading>
-            <Text fontSize="xs">{`Balance: ${tokenBalance}`}</Text>
+            <Text textAlign="right" fontSize="xs">{`Balance: ${parseFloat(tokenBalance).toFixed(3)}`}</Text>
           </Flex>
           
           <NumberInput defaultValue={0} value={token} min={0} max={ethBalance/price}>
@@ -136,9 +138,9 @@ export default function Home() {
 }
 
 // export async function getStaticProps(context) {
-//   const name = await getter.getName()
-//   const symbol = await getter.getSymbol()
-//   const price = await getter.getPrice()
+//   const name = await web3Repo.getName()
+//   const symbol = await web3Repo.getSymbol()
+//   const price = await web3Repo.getPrice()
 //   return {
 //     props: {name, symbol, price: Web3.utils.fromWei(price), ethBalance:10, tokenBalance:5}, // will be passed to the page component as props
 //     revalidate: 10

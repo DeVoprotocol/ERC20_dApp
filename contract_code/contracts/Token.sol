@@ -12,7 +12,7 @@ contract Token is ERC20 {
 
     function getToken() external payable {
         uint256 remainder = msg.value%currentPrice;
-        uint256 amountToMint = msg.value/currentPrice;
+        uint256 amountToMint = (msg.value*10**decimals())/currentPrice;
         _mint(msg.sender, amountToMint);
         currentPrice = currentPrice+(currentPrice/10);
         payable(msg.sender).transfer(remainder);
