@@ -1,0 +1,21 @@
+{
+  "name": "ERC20_dApp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/aloksGithub/ERC20_dApp.git",
+  "author": "Alok Yadav <alokgithub@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "frontend", 
+    "contract_code"
+  ],
+  "scripts": {    
+    "test": "yarn --cwd contract test",
+    "compile": "yarn --cwd contract_code compile",
+    "migrate": "yarn --cwd contract_code migrate",
+    "dev": "yarn --cwd frontend dev",
+    "build": "yarn --cwd frontend build",
+    "start": "yarn --cwd frontend start"
+  }
+}
