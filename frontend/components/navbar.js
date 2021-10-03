@@ -99,8 +99,12 @@ import {
   
   const NAV_ITEMS = [
     {
-      label: 'About',
+      label: 'Home',
       href: '/'
+    },
+    {
+      label: 'About',
+      href: '/about'
     },
     {
       label: 'Github',
