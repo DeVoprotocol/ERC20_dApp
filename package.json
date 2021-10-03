@@ -11,7 +11,7 @@
     "contract_code"
   ],
   "scripts": {    
-    "test": "yarn --cwd contract test",
+    "test": "yarn --cwd contract_code test",
     "compile": "yarn --cwd contract_code compile",
     "migrate": "yarn --cwd contract_code migrate",
     "dev": "yarn --cwd frontend dev",

@@ -10,7 +10,7 @@ contract("Test minting", accounts => {
         const newPrice = await contract.getCurrentPrice()
         const balance = await contract.balanceOf(accounts[5])
         assert.equal(newPrice.toString(), oldPrice.add(oldPrice.div(new BN('10'))).toString())
-        assert.equal(balance.toString(), '1000000000000000000')
+        assert.equal(balance.toString(), '1000000000000000000000')
     })
     it("Transferred tokens correctly", async () => {
         await contract.transfer(accounts[1], 1, {from:accounts[5]})
