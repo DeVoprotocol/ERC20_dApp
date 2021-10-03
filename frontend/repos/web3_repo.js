@@ -27,31 +27,62 @@ class Web3Repo {
     }
 
     getName = async () => {
-        const name = await this.contract.methods.name().call()
+        let name
+        try{
+            name = await this.contract.methods.name().call()
+        } catch {
+            name = "Token"
+            alert('Incorrect contract address. Try redeploying smart contract and reload')
+        }
+        
         return name
     }
 
     getSymbol = async () => {
-        const symbol = await this.contract.methods.symbol().call()
+        let symbol
+        try {
+            symbol = await this.contract.methods.symbol().call()
+        } catch {
+            symbol = "TK"
+            alert('Incorrect contract address. Try redeploying smart contract and reload')
+        }
         return symbol
     }
 
     getPrice = async () => {
-        const decimals = await this.contract.methods.decimals().call()
-        const price = await this.contract.methods.getCurrentPrice().call()
-        console.log(price)
+        let price
+        let decimals = 18
+        try {
+            decimals = await this.contract.methods.decimals().call()
+            price = await this.contract.methods.getCurrentPrice().call()
+        } catch {
+            price = '1000000000000000000'
+            alert('Incorrect contract address. Try redeploying smart contract and reload')
+        }
         return price/10**+decimals
     }
 
     getBalance = async (account) => {
-        const decimals = await this.contract.methods.decimals().call()
-        const balance = await this.contract.methods.balanceOf(account).call()
-        console.log(balance)
+        let balance
+        let decimals = 18
+        try {
+            decimals = await this.contract.methods.decimals().call()
+            balance = await this.contract.methods.balanceOf(account).call()
+        } catch {
+            balance = 0
+            alert('Incorrect contract address. Try redeploying smart contract and reload')
+        }
         return balance/10**+decimals
     }
 
     getDecimals = async () => {
-        const decimals = await this.contract.methods.decimals().call()
+        let decimals
+        try {
+            decimals = await this.contract.methods.decimals().call()
+        } catch {
+            decimals = 18
+            alert('Incorrect contract address. Try redeploying smart contract and reload')
+        }
         return decimals
     }
 

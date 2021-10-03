@@ -99,7 +99,7 @@ import {
   
   const NAV_ITEMS = [
     {
-      label: 'Docs',
+      label: 'About',
       href: '/'
     },
     {
