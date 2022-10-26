@@ -12,8 +12,8 @@ import Navbar from '../components/navbar'
 export default function Home() {
 
   const [web3Repo, setWeb3Repo] = useState()
-  const [name, setName] = useState("Token")
-  const [symbol, setSymbol] = useState("TK")
+  const [name, setName] = useState("DeVo")
+  const [symbol, setSymbol] = useState("DEVO")
   const [price, setPrice] = useState(0)
   const [decimals, setDecimals] = useState(18)
   const [eth, setEth] = useState(0)
@@ -42,9 +42,9 @@ export default function Home() {
       const accounts = await web3.eth.getAccounts()
       let tempRepo
       let error = ''
-      if (chainId!==(process.env.CHAIN_ID || 1337)) {
+      if (chainId!==(process.env.CHAIN_ID || 1981)) {
         setTokenBalance(0)
-        error = `Connect to chain ${process.env.CHAIN_ID || 1337}`
+        error = `Connect to chain ${process.env.CHAIN_ID || 1981}`
       } else{
         if (!web3Repo){
           tempRepo = new Web3Repo(Web3.givenProvider)
